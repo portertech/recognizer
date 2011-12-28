@@ -18,5 +18,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency("librato-metrics", "0.2.2")
+  s.add_dependency("bunny", "0.7.8")
   s.add_dependency("json")
 end
