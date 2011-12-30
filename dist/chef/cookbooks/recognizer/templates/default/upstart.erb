@@ -1,0 +1,15 @@
+# Upstart: /etc/init/recognizer.conf
+# Managed by OpsChef
+
+description "recognizer"
+
+start on (local-filesystems and net-device-up IFACE=eth0)
+stop on [!12345]
+
+respawn
+
+pre-start script
+  test -x <%= Recognizer.find_bin %> || { stop; exit 0; }
+end script
+
+exec sudo -u <%= node.recognizer.user %> sh -c "<%= Recognizer.find_bin %><% if @options %> <%= @options %><% end %>"
