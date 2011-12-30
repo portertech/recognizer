@@ -1,0 +1,4 @@
+* Welcome to Recognizer
+  A Carbon AMQP impostor, sending Graphite metrics to Librato Metrics.
+
+  [[https://github.com/portertech/recognizer/raw/master/recognizer.gif]]
