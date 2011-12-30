@@ -2,3 +2,6 @@
   A Carbon AMQP impostor, sending Graphite metrics to Librato Metrics.
 
   [[https://github.com/portertech/recognizer/raw/master/recognizer.gif]]
+
+* License
+  Recognizer is released under the [[https://github.com/portertech/recognizer/raw/master/MIT-LICENSE.txt][MIT license]].
