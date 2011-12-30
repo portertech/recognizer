@@ -19,5 +19,10 @@ module Recognizer
       :boolean => true,
       :show_options => true,
       :exit => 0
+
+    def read
+      parse_options
+      config
+    end
   end
 end

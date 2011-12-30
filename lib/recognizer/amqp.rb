@@ -8,7 +8,7 @@ module Recognizer
       unless thread_queue && options.is_a?(Hash)
         raise "You must provide a thread queue and options"
       end
-      amqp = Bunny.new
+      amqp = Bunny.new(options[:amqp])
       amqp.start
       queue = amqp.queue("recognizer")
       exchange = amqp.exchange("graphite", :type => :topic, :durable => true)
