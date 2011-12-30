@@ -11,7 +11,7 @@ if node.recognizer.amqp.use_ssl
   node.recognizer.amqp.ssl.cert_chain_file = File.join(node.recognizer.directory, "ssl", "cert.pem")
   node.recognizer.amqp.ssl.private_key_file = File.join(node.recognizer.directory, "ssl", "key.pem")
 
-  ssl = data_bag_item("recognize", "ssl")
+  ssl = data_bag_item("recognizer", "ssl")
 
   directory File.join(node.recognizer.directory, "ssl")
 
