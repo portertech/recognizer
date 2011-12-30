@@ -18,19 +18,15 @@ module Recognizer
         puts "Awaiting the metrics with impatience ..."
         queue.subscribe do |message|
           payload = message[:payload]
-          begin
-            metrics = JSON.parse(payload)
-            if metrics.is_a?(Array)
-              metrics.each do |metric|
-                if metric.split(" ").count == 3
-                  thread_queue.push(metric)
-                end
-              end
-            end
-          rescue JSON::ParserError
-            metric = payload
-            if metric.split(" ").count == 3
-              thread_queue.push(metric)
+          routing_key = message[:routing_key]
+          lines = payload.split("\n")
+          lines.each do |line|
+            line = line.strip
+            case line.split(" ").count
+            when 3
+              thread_queue.push(line)
+            when 2
+              thread_queue.push("#{routing_key} #{line}")
             end
           end
         end

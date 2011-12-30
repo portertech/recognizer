@@ -31,9 +31,9 @@ module Recognizer
         loop do
           graphite_formated = thread_queue.pop
           puts "Adding metric to queue: #{graphite_formated}"
-          metric = graphite_formated.split(" ")
+          metric, value, timestamp = graphite_formated.split(" ")
           mutex.synchronize do
-            librato.add metric[0].to_sym => {:value => metric[1].to_f, :measure_time => metric[2].to_i}
+            librato.add metric.to_sym => {:value => value.to_f, :measure_time => timestamp.to_i}
           end
         end
       end
