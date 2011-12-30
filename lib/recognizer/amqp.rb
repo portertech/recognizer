@@ -1,4 +1,5 @@
 require "rubygems"
+require "thread"
 require "bunny"
 
 module Recognizer
@@ -12,6 +13,7 @@ module Recognizer
       queue = amqp.queue("recognizer")
       exchange = amqp.exchange("graphite", :type => :topic, :durable => true)
       queue.bind(exchange, :key => "*")
+      Thread.abort_on_exception = true
       consumer = Thread.new do
         queue.subscribe do |message|
           payload = message[:payload]

@@ -13,13 +13,17 @@ module Recognizer
       end
       ::Librato::Metrics.authenticate(options[:librato][:email], options[:librato][:api_key])
       librato = ::Librato::Metrics::Queue.new
+      mutex = Mutex.new
+      Thread.abort_on_exception = true
       Thread.new do
         loop do
           sleep(options[:librato][:flush_interval] || 10)
           unless librato.queued.empty?
-            puts "Attempting to flush #{librato.queued.count} metrics to Librato"
-            librato.submit
-            puts "Successfully flushed #{librato.queued.count} metrics to Librato"
+            puts "Attempting to flush metrics to Librato"
+            mutex.synchronize do
+              librato.submit
+            end
+            puts "Successfully flushed metrics to Librato"
           end
         end
       end
@@ -28,7 +32,9 @@ module Recognizer
           graphite_formated = thread_queue.pop
           puts "Adding metric to queue: #{graphite_formated}"
           metric = graphite_formated.split(" ")
-          librato.add metric[0].to_sym => {:value => metric[1].to_f, :measure_time => metric[2].to_i}
+          mutex.synchronize do
+            librato.add metric[0].to_sym => {:value => metric[1].to_f, :measure_time => metric[2].to_i}
+          end
         end
       end
     end
