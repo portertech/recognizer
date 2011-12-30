@@ -7,6 +7,14 @@
 # All rights reserved - Do Not Redistribute
 #
 
+gem_package "recognizer" do
+  version node.recognizer.version
+end
+
+directory node.recognizer.directory do
+  recursive true
+end
+
 if node.recognizer.amqp.use_ssl
   node.recognizer.amqp.ssl.cert_chain_file = File.join(node.recognizer.directory, "ssl", "cert.pem")
   node.recognizer.amqp.ssl.private_key_file = File.join(node.recognizer.directory, "ssl", "key.pem")
@@ -24,14 +32,6 @@ if node.recognizer.amqp.use_ssl
     content ssl["key"]
     mode 0644
   end
-end
-
-gem_package "recognizer" do
-  version node.recognizer.version
-end
-
-directory node.recognizer.directory do
-  recursive true
 end
 
 user node.recognizer.user do
