@@ -9,4 +9,4 @@ default.recognizer.amqp.use_ssl = false
 default.recognizer.amqp.ssl = Mash.new
 default.recognizer.amqp.vhost = "/"
 default.recognizer.amqp.user = "guest"
-default.recognizer.amqp.password = "guest"
+default.recognizer.amqp.pass = "guest"
