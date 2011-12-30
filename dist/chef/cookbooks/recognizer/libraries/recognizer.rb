@@ -2,7 +2,7 @@ module Recognizer
   def self.generate_config(node)
     config = {:version => node.recognizer.version}
     config.merge!(:librato => node.recognizer.librato.to_hash)
-    config.merge!(:amqp => node.recognizer.amqp.to_hash.reject { |key, value| %w[use_ssl].include? key })
+    config.merge!(:amqp => node.recognizer.amqp.to_hash.reject { |key, value| %w[use_ssl].include?(key) || (value.is_a?(Hash) && value.empty?) })
     JSON.pretty_generate(config)
   end
 
