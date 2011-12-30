@@ -15,6 +15,7 @@ module Recognizer
       queue.bind(exchange, :key => "*")
       Thread.abort_on_exception = true
       consumer = Thread.new do
+        puts "Awaiting the metrics with impatience ..."
         queue.subscribe do |message|
           payload = message[:payload]
           begin
