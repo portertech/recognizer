@@ -39,7 +39,7 @@ module Recognizer
           puts "Adding metric to queue: #{graphite_formated}"
           metric, value, timestamp = graphite_formated.split(" ")
           mutex.synchronize do
-            librato.add metric.to_sym => {:value => value.to_f, :measure_time => timestamp.to_i}
+            librato.add(metric.to_sym => {:value => value.to_f, :measure_time => timestamp.to_i})
           end
         end
       end
