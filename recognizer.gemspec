@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Sean Porter"]
   s.email       = ["portertech@gmail.com"]
   s.homepage    = "https://github.com/portertech/recognizer"
-  s.summary     = "A Graphite Carbon AMQP impostor, sending Graphite metrics to Librato Metrics."
-  s.description = "A Graphite Carbon AMQP impostor, sending Graphite metrics to Librato Metrics."
+  s.summary     = "A Graphite Carbon AMQP impostor, sending metrics to Librato Metrics."
+  s.description = "A Graphite Carbon AMQP impostor, sending metrics to Librato Metrics."
 
   s.rubyforge_project = "recognizer"
 
