@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Sean Porter"]
   s.email       = ["portertech@gmail.com"]
   s.homepage    = "https://github.com/portertech/recognizer"
-  s.summary     = ""
-  s.description = ""
+  s.summary     = "A Graphite Carbon AMQP impostor, sending Graphite metrics to Librato Metrics."
+  s.description = "A Graphite Carbon AMQP impostor, sending Graphite metrics to Librato Metrics."
 
   s.rubyforge_project = "recognizer"
 
@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.executables   = Dir.glob("bin/**/*").map { |file| File.basename(file) }
   s.require_paths = ["lib"]
 
-  s.add_dependency("librato-metrics", "0.2.2")
+  s.add_dependency("librato-metrics", "0.2.3")
   s.add_dependency("bunny", "0.7.8")
   s.add_dependency('mixlib-cli', '>= 1.1.0')
   s.add_dependency("json")

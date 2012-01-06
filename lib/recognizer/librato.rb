@@ -2,12 +2,6 @@ require "rubygems"
 require "thread"
 require "librato/metrics"
 
-begin
-  RUBY_ENGINE
-rescue NameError
-  RUBY_ENGINE = "ruby"
-end
-
 module Recognizer
   class Librato
     def initialize(thread_queue, options)
