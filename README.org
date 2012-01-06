@@ -11,6 +11,11 @@
   :     "email": "email@example.com",
   :     "api_key": "706325cf16d84d098127e143221dd180706325cf16d84d098127e143221dd180",
   :     "flush_interval": 5
+  :   },
+  :   "amqp": {
+  :     "host": "localhost",
+  :     "pass": "password",
+  :     "user": "username"
   :   }
   : }
 * Usage
