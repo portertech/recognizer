@@ -8,7 +8,6 @@ module Recognizer
     option :config_file,
       :short => "-c CONFIG",
       :long  => "--config CONFIG",
-      :default => File.join(File.dirname(__FILE__), "..", "..", "config.json"),
       :description => "The config file path"
 
     option :help,
