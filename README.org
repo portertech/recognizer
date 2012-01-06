@@ -13,7 +13,7 @@
   :     "flush_interval": 5
   :   },
   :   "amqp": {
-  :     "host": "localhost",
+  :     "host": "hostname",
   :     "pass": "password",
   :     "user": "username"
   :   }
