@@ -1,11 +1,11 @@
 * Welcome to Recognizer
-  A Carbon AMQP impostor, sending Graphite metrics to Librato Metrics.
+  A Graphite Carbon AMQP impostor, sending metrics to [[https://metrics.librato.com/][Librato Metrics]].
 
   [[https://github.com/portertech/recognizer/raw/master/recognizer.gif]]
 * Install
   : gem install recognizer
 * Configure
-  config.json
+  Example: config.json
   : {
   :   "librato": {
   :     "email": "email@example.com",
