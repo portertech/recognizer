@@ -39,7 +39,7 @@ module Recognizer
             end
             puts "Adding metric to queue: #{graphite_formated}"
             mutex.synchronize do
-              librato.add(metric => {:value => value, :measure_time => timestamp})
+              librato.add(metric => {:value => value, :measure_time => timestamp, :source => "recognizer"})
             end
           rescue ArgumentError
             puts "Invalid metric: #{graphite_formated}"
