@@ -30,10 +30,17 @@ module Recognizer
       Thread.new do
         loop do
           graphite_formated = thread_queue.pop
-          puts "Adding metric to queue: #{graphite_formated}"
-          metric, value, timestamp = graphite_formated.split(" ")
-          mutex.synchronize do
-            librato.add(metric.to_sym => {:value => value.to_f, :measure_time => timestamp.to_i})
+          begin
+            metric, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
+              result << (result.empty? ? part.to_sym : Float(part).pretty)
+              result
+            end
+            puts "Adding metric to queue: #{graphite_formated}"
+            mutex.synchronize do
+              librato.add(metric => {:value => value, :measure_time => timestamp})
+            end
+          rescue ArgumentError
+            puts "Invalid metric: #{graphite_formated}"
           end
         end
       end
