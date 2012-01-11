@@ -2,6 +2,8 @@ require "rubygems"
 require "thread"
 require "librato/metrics"
 
+require File.join(File.dirname(__FILE__), 'patches', 'float')
+
 module Recognizer
   class Librato
     def initialize(thread_queue, options)
