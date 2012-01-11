@@ -1,4 +1,4 @@
-default.recognizer.version = "0.0.6"
+default.recognizer.version = "0.0.7"
 default.recognizer.directory = "/etc/recognizer"
 default.recognizer.user = "recognizer"
 default.recognizer.librato.email = "EMAIL"
