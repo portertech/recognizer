@@ -8,10 +8,16 @@ module Recognizer
       unless thread_queue && options.is_a?(Hash)
         raise "You must provide a thread queue and options"
       end
-      amqp = Bunny.new(options[:amqp])
+      amqp = Bunny.new(options[:amqp].reject { |key, value| key == :exchange })
       amqp.start
       queue = amqp.queue("recognizer")
-      exchange = amqp.exchange("graphite", :type => :topic, :durable => true)
+      exchange_name = case
+      when options.has_key?(:amqp) && options[:amqp].has_key?(:exchange)
+        options[:amqp][:exchange][:name] || "graphite"
+      else
+        "graphite"
+      end
+      exchange = amqp.exchange(exchange_name, :type => :topic, :durable => true)
       queue.bind(exchange, :key => "*")
       Thread.abort_on_exception = true
       consumer = Thread.new do
