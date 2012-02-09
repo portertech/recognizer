@@ -8,27 +8,32 @@ module Recognizer
       unless thread_queue && options.is_a?(Hash)
         raise "You must provide a thread queue and options"
       end
-      amqp = Bunny.new(options[:amqp].reject { |key, value| key == :exchange })
+      amqp = Bunny.new(options[:amqp])
       amqp.start
+      
       queue = amqp.queue("recognizer")
-      exchange_name = case
-      when options.has_key?(:amqp) && options[:amqp].has_key?(:exchange)
-        options[:amqp][:exchange][:name] || "graphite"
+
+      
+      if options.has_key?(:amqp) && options[:amqp].has_key?(:exchange)
+        exchange_name = options[:amqp][:exchange][:name] || "graphite"
       else
-        "graphite"
+        exchange_name = "graphite"
       end
-      exchange = amqp.exchange(exchange_name, :type => :topic, :durable => true)
-      queue.bind(exchange, :key => "*")
+
+      exchange = amqp.exchange(exchange_name, :type => :topic, :durable => options[:amqp][:exchange][:durable])
+      queue.bind(exchange, :key => options[:amqp][:exchange][:routing_key])
+      
       Thread.abort_on_exception = true
       consumer = Thread.new do
         puts "Awaiting the metrics with impatience ..."
         queue.subscribe do |message|
-          payload = message[:payload]
-          routing_key = message[:routing_key]
+          payload     = message[:payload]
+          routing_key = message[:delivery_details][:routing_key]
+          
           lines = payload.split("\n")
           lines.each do |line|
             line = line.strip
-            case line.split(" ").count
+            case line.split(/\s/).count
             when 3
               thread_queue.push(line)
             when 2
