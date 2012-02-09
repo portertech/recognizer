@@ -18,7 +18,7 @@ module Recognizer
         exchange_name = options[:amqp][:exchange][:name]        || "graphite"
         durable       = options[:amqp][:exchange][:durable]     || false
         routing_key   = options[:amqp][:exchange][:routing_key] || "*"
-        exchange_type = options[:amqp][:exchange][:type].to_sym || :topic
+        exchange_type = options[:amqp][:exchange][:type]        || :topic
       else
         exchange_name = "graphite"
         durable       = true
@@ -26,7 +26,7 @@ module Recognizer
         exchange_type = :topic
       end
 
-      exchange = amqp.exchange(exchange_name, :type => exchange_type, :durable => durable)
+      exchange = amqp.exchange(exchange_name, :type => exchange_type.to_sym, :durable => durable)
       queue.bind(exchange, :key => routing_key)
       
       Thread.abort_on_exception = true
