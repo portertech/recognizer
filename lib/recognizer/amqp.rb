@@ -21,11 +21,11 @@ module Recognizer
       amqp.start
 
       exchange = amqp.exchange(exchange_name, :type => exchange_type.to_sym, :durable => durable)
-
       queue = amqp.queue("recognizer")
       queue.bind(exchange, :key => routing_key)
 
       Thread.abort_on_exception = true
+
       consumer = Thread.new do
         puts "Awaiting the metrics with impatience ..."
         queue.subscribe do |message|
