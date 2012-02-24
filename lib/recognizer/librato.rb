@@ -37,12 +37,12 @@ module Recognizer
       when String
         if options[:librato][:source].match("^/.*/$")
           @source_pattern = Regexp.new(options[:librato][:source].delete("/"))
-          lambda { |name| (matched = name.grep(@source_pattern).first) ? matched : "recognizer" }
+          lambda { |path| (matched = path.grep(@source_pattern).first) ? matched : "recognizer" }
         else
           lambda { options[:librato][:source] }
         end
       when Integer
-        lambda { |name| name.slice(options[:librato][:source]) }
+        lambda { |path| path.slice(options[:librato][:source]) }
       else
         lambda { "recognizer" }
       end
@@ -51,13 +51,13 @@ module Recognizer
         loop do
           graphite_formated = thread_queue.pop
           begin
-            name, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
+            path, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
               result << (result.empty? ? part.split(".") : Float(part).pretty)
               result
             end
-            source = get_source.call(name)
-            name.delete(source)
-            metric = {name.join(".") => {:value => value, :measure_time => timestamp, :source => source}}
+            source = get_source.call(path)
+            path.delete(source)
+            metric = {path.join(".") => {:value => value, :measure_time => timestamp, :source => source}}
             mutex.synchronize do
               puts "Adding metric to queue: #{metric.inspect}"
               librato.add(metric)
