@@ -23,7 +23,7 @@ module Recognizer
       Thread.new do
         loop do
           sleep(options[:librato][:flush_interval] || 10)
-          unless librato.queued.empty?
+          unless librato.empty?
             puts "Attempting to flush metrics to Librato"
             mutex.synchronize do
               librato.submit
