@@ -29,17 +29,35 @@ module Recognizer
           end
         end
       end
+      get_source = case options[:librato][:source]
+      when String
+        if options[:librato][:source].match("^/.*/$")
+          lambda do |name|
+            pattern = Regexp.new(options[:librato][:source].delete("/"))
+            (matched = name.grep(pattern).first) ? matched : "recognizer"
+          end
+        else
+          lambda { options[:librato][:source] }
+        end
+      when Integer
+        lambda { |name| name.slice(options[:librato][:source]) }
+      else
+        lambda { "recognizer" }
+      end
       Thread.new do
         loop do
           graphite_formated = thread_queue.pop
           begin
-            metric, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
-              result << (result.empty? ? part.to_sym : Float(part).pretty)
+            name, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
+              result << (result.empty? ? part.split(".") : Float(part).pretty)
               result
             end
-            puts "Adding metric to queue: #{graphite_formated}"
+            source = get_source.call(name)
+            name.delete(source)
+            metric = {name.join(".") => {:value => value, :measure_time => timestamp, :source => source}}
             mutex.synchronize do
-              librato.add(metric => {:value => value, :measure_time => timestamp, :source => "recognizer"})
+              puts "Adding metric to queue: #{metric.inspect}"
+              librato.add(metric)
             end
           rescue ArgumentError
             puts "Invalid metric: #{graphite_formated}"
