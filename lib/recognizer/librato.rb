@@ -37,14 +37,14 @@ module Recognizer
       when String
         if options[:librato][:source].match("^/.*/$")
           @source_pattern = Regexp.new(options[:librato][:source].delete("/"))
-          lambda { |path| (matched = path.grep(@source_pattern).first) ? matched : "recognizer" }
+          Proc.new { |path| (matched = path.grep(@source_pattern).first) ? matched : "recognizer" }
         else
-          lambda { options[:librato][:source] }
+          Proc.new { options[:librato][:source] }
         end
       when Integer
-        lambda { |path| path.slice(options[:librato][:source]) }
+        Proc.new { |path| path.slice(options[:librato][:source]) }
       else
-        lambda { "recognizer" }
+        Proc.new { "recognizer" }
       end
 
       Thread.new do
