@@ -31,7 +31,6 @@ module Recognizer
         queue.subscribe do |message|
           payload         = message[:payload]
           msg_routing_key = message[:routing_key] || message[:delivery_details][:routing_key]
-
           lines = payload.split("\n")
           lines.each do |line|
             line = line.strip
