@@ -36,10 +36,8 @@ module Recognizer
       get_source = case options[:librato][:source]
       when String
         if options[:librato][:source].match("^/.*/$")
-          lambda do |name|
-            pattern = Regexp.new(options[:librato][:source].delete("/"))
-            (matched = name.grep(pattern).first) ? matched : "recognizer"
-          end
+          @source_pattern = Regexp.new(options[:librato][:source].delete("/"))
+          lambda { |name| (matched = name.grep(@source_pattern).first) ? matched : "recognizer" }
         else
           lambda { options[:librato][:source] }
         end
