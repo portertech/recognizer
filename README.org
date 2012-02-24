@@ -5,7 +5,7 @@
 * Install
   : gem install recognizer
 * Configure
-  Example: config.json
+  Example: =config.json=
   : {
   :   "librato": {
   :     "email": "email@example.com",
@@ -25,7 +25,7 @@
 * More
   Example metric path: =production.i-424242.cpu.user=
 
-  Get source from metric path using a regular expression
+  Get the source from the metric path using a regular expression
   : {
   :   "librato": {
   :     "source": "/i-.*/"
@@ -33,7 +33,7 @@
   : {
   :   "librato": {
   :     "source": 1
-  Or define a static path
+  Or define a static source
   : {
   :   "librato": {
   :     "source": "custom"
