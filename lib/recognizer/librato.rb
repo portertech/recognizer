@@ -13,10 +13,13 @@ module Recognizer
       unless options[:librato][:email] && options[:librato][:api_key]
         raise "You must provide a Librato Metrics account email and API key"
       end
+
       ::Librato::Metrics.authenticate(options[:librato][:email], options[:librato][:api_key])
       librato = ::Librato::Metrics::Queue.new
+
       mutex = Mutex.new
       Thread.abort_on_exception = true
+
       Thread.new do
         loop do
           sleep(options[:librato][:flush_interval] || 10)
@@ -29,6 +32,7 @@ module Recognizer
           end
         end
       end
+
       get_source = case options[:librato][:source]
       when String
         if options[:librato][:source].match("^/.*/$")
@@ -44,6 +48,7 @@ module Recognizer
       else
         lambda { "recognizer" }
       end
+
       Thread.new do
         loop do
           graphite_formated = thread_queue.pop
