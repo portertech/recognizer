@@ -14,13 +14,29 @@
   :   },
   :   "amqp": {
   :     "host": "hostname",
-  :     "pass": "password",
-  :     "user": "username"
+  :     "user": "username",
+  :     "pass": "password"
   :   }
   : }
 * Usage
   : Usage: recognizer (options)
   :  -c, --config CONFIG              The config file path
   :  -h, --help                       Show this message
+* More
+  Example metric path: =production.i-424242.cpu.user=
+
+  Get source from metric path using a regular expression
+  : {
+  :   "librato": {
+  :     "source": "/i-.*/"
+  Or using an index
+  : {
+  :   "librato": {
+  :     "source": 1
+  Or define a static path
+  : {
+  :   "librato": {
+  :     "source": "custom"
+  By default, Recognizer uses the source: =recognizer=
 * License
   Recognizer is released under the [[https://github.com/portertech/recognizer/raw/master/MIT-LICENSE.txt][MIT license]].
