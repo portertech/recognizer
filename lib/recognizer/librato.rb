@@ -29,43 +29,35 @@ module Recognizer
           end
         end
       end
-      set_source = case options[:librato][:source]
+      get_source = case options[:librato][:source]
       when String
         if options[:librato][:source].match("^/.*/$")
-          Proc.new do
-            source = "recognizer"
-            metric.match(options[:librato][:source].delete("/")) do |matched|
-              source = matched
-              metric.gsub!("#{source}.", "")
-            end
+          lambda do |name|
+            pattern = Regexp.new(options[:librato][:source].delete("/"))
+            (matched = name.grep(pattern).first) ? matched : "recognizer"
           end
         else
-          Proc.new do
-            source = options[:librato][:source]
-          end
+          lambda { options[:librato][:source] }
         end
       when Integer
-        Proc.new do
-          source = metric.split(".").slice(options[:librato][:source])
-          metric.gsub!("#{source}.", "")
-        end
+        lambda { |name| name.slice(options[:librato][:source]) }
       else
-        Proc.new do
-          source = "recognizer"
-        end
+        lambda { "recognizer" }
       end
       Thread.new do
         loop do
           graphite_formated = thread_queue.pop
           begin
-            metric, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
-              result << (result.empty? ? part.to_sym : Float(part).pretty)
+            name, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
+              result << (result.empty? ? part.split(".") : Float(part).pretty)
               result
             end
-            set_source.call
+            source = get_source.call(name)
+            name.delete(source)
+            metric = {name.join(".") => {:value => value, :measure_time => timestamp, :source => source}}
             mutex.synchronize do
-              puts "Adding metric to queue: #{graphite_formated}"
-              librato.add(metric => {:value => value, :measure_time => timestamp, :source => source})
+              puts "Adding metric to queue: #{metric.inspect}"
+              librato.add(metric)
             end
           rescue ArgumentError
             puts "Invalid metric: #{graphite_formated}"
