@@ -33,16 +33,16 @@ module Recognizer
         end
       end
 
-      get_source = case options[:librato][:source]
+      get_source = case options[:librato][:metric_source]
       when String
-        if options[:librato][:source].match("^/.*/$")
-          @source_pattern = Regexp.new(options[:librato][:source].delete("/"))
+        if options[:librato][:metric_source].match("^/.*/$")
+          @source_pattern = Regexp.new(options[:librato][:metric_source].delete("/"))
           Proc.new { |path| (matched = path.grep(@source_pattern).first) ? matched : "recognizer" }
         else
-          Proc.new { options[:librato][:source] }
+          Proc.new { options[:librato][:metric_source] }
         end
       when Integer
-        Proc.new { |path| path.slice(options[:librato][:source]) }
+        Proc.new { |path| path.slice(options[:librato][:metric_source]) }
       else
         Proc.new { "recognizer" }
       end

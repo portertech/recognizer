@@ -25,18 +25,18 @@
 * More
   Example metric path: =production.i-424242.cpu.user=
 
-  Get the source from the metric path using a regular expression
+  Extract the metric source from the metric path using a regular expression
   : {
   :   "librato": {
-  :     "source": "/i-.*/"
+  :     "metric_source": "/i-.*/"
   Or using an index
   : {
   :   "librato": {
-  :     "source": 1
+  :     "metric_source": 1
   Or define a static source
   : {
   :   "librato": {
-  :     "source": "custom"
+  :     "metric_source": "example"
   By default, Recognizer uses the source: =recognizer=
 * License
   Recognizer is released under the [[https://github.com/portertech/recognizer/raw/master/MIT-LICENSE.txt][MIT license]].
