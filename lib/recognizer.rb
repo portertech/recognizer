@@ -1,4 +1,3 @@
-require "recognizer/version"
 require "recognizer/cli"
 require "recognizer/config"
 require "recognizer/librato"

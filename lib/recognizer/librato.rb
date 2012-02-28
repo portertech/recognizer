@@ -1,4 +1,5 @@
 require "rubygems"
+require "recognizer/version"
 require "thread"
 require "librato/metrics"
 
@@ -15,6 +16,7 @@ module Recognizer
       end
 
       ::Librato::Metrics.authenticate(options[:librato][:email], options[:librato][:api_key])
+      ::Librato::Metrics.agent_identifier("recognizer", Recognizer::VERSION, "portertech")
       librato = ::Librato::Metrics::Queue.new
 
       mutex = Mutex.new
