@@ -11,9 +11,10 @@ module Recognizer
     config = Recognizer::Config.new(cli_options)
     config_options = config.read
     carbon_queue = Queue.new
-    Recognizer::Librato.new(carbon_queue, config_options)
-    Recognizer::TCP.new(carbon_queue, config_options)
-    Recognizer::AMQP.new(carbon_queue, config_options)
+    logger = Logger.new(STDOUT)
+    Recognizer::Librato.new(carbon_queue, logger, config_options)
+    Recognizer::TCP.new(carbon_queue, logger, config_options)
+    Recognizer::AMQP.new(carbon_queue, logger, config_options)
     loop do
       sleep 30
     end

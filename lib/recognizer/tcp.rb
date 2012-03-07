@@ -5,7 +5,7 @@ require "socket"
 
 module Recognizer
   class TCP
-    def initialize(carbon_queue, options)
+    def initialize(carbon_queue, logger, options)
       unless carbon_queue && options.is_a?(Hash)
         raise "You must provide a thread queue and options"
       end

@@ -4,7 +4,7 @@ require "bunny"
 
 module Recognizer
   class AMQP
-    def initialize(carbon_queue, options)
+    def initialize(carbon_queue, logger, options)
       unless carbon_queue && options.is_a?(Hash)
         raise "You must provide a thread queue and options"
       end
@@ -27,7 +27,7 @@ module Recognizer
       Thread.abort_on_exception = true
 
       Thread.new do
-        puts "Awaiting the metrics with impatience ..."
+        logger.info("Awaiting metrics with impatience ...")
         queue.subscribe do |message|
           payload         = message[:payload]
           msg_routing_key = message[:routing_key] || message[:delivery_details][:routing_key]
