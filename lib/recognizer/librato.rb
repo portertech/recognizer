@@ -7,8 +7,8 @@ require File.join(File.dirname(__FILE__), 'patches', 'float')
 
 module Recognizer
   class Librato
-    def initialize(thread_queue, options)
-      unless thread_queue && options.is_a?(Hash)
+    def initialize(carbon_queue, options)
+      unless carbon_queue && options.is_a?(Hash)
         raise "You must provide a thread queue and options"
       end
       unless options[:librato][:email] && options[:librato][:api_key]
@@ -51,7 +51,7 @@ module Recognizer
 
       Thread.new do
         loop do
-          graphite_formated = thread_queue.pop
+          graphite_formated = carbon_queue.pop
           begin
             path, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
               result << (result.empty? ? part.split(".") : Float(part).pretty)
