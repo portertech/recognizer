@@ -11,7 +11,7 @@ Warbler::Config.new do |config|
   # config.features = %w(gemjar)
 
   # Application directories to be included in the webapp.
-  config.dirs = %w(lib bin vendor)
+  config.dirs = %w(lib bin)
 
   # Additional files/directories to include, above those in config.dirs
   # config.includes = FileList["db"]
@@ -49,7 +49,7 @@ Warbler::Config.new do |config|
   # so that they can be packaged in the archive.
   # For Rails applications, the Rails gems are included by default
   # unless the vendor/rails directory is present.
-  # config.gems += ["activerecord-jdbcmysql-adapter", "jruby-openssl"]
+  # config.gems += ["jruby-openssl"]
   # config.gems << "tzinfo"
 
   # Uncomment this if you don't want to package rails gem.

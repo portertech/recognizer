@@ -1,6 +1,7 @@
-*.gem
 .bundle
 Gemfile.lock
-pkg/*
 vendor/*
+pkg/*
+*.gem
+*.jar
 config.json
