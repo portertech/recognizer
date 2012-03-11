@@ -33,7 +33,7 @@
   :  -c, --config CONFIG              The config file path
   :  -h, --help                       Show this message
 * More
-  By default, Recognizer uses =recognizer= as the metric source
+***  By default, Recognizer uses =recognizer= as the metric source
 
   Example metric path: =production.i-424242.cpu.user=
 
@@ -50,14 +50,14 @@
   :   "librato": {
   :     "metric_source": "example"
 
-  By default, The Recognizer TCP server uses =20= threads
+***  By default, The Recognizer TCP server uses =20= threads
 
   Specify the number of threads the TCP server uses
   : {
   :   "tcp": {
   :     "threads": 30
 
-  By default, Recognizer binds the AMQP queue =recognizer= to the
+***  By default, Recognizer binds the AMQP queue =recognizer= to the
   topic exchange =graphite= with the routing key =#=
 
   Use a custom AMQP exchange
