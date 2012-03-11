@@ -5,7 +5,7 @@
 
   [[https://github.com/portertech/recognizer/raw/master/recognizer.gif]]
 * Install
-  Executable Java JAR
+  Executable Java JAR (recommended)
   : wget https://github.com/downloads/portertech/recognizer/recognizer.jar
   RubyGems
   : gem install recognizer
@@ -33,7 +33,7 @@
   :  -c, --config CONFIG              The config file path
   :  -h, --help                       Show this message
 * More
-  By default, Recognizer uses the source: =recognizer=
+  By default, Recognizer uses =recognizer= as the metric source
 
   Example metric path: =production.i-424242.cpu.user=
 
@@ -50,15 +50,23 @@
   :   "librato": {
   :     "metric_source": "example"
 
-  By default, Recognizer uses =20= threads for the TCP server
+  By default, The Recognizer TCP server uses =20= threads
 
-  Specify the number of TCP server threads
+  Specify the number of threads the TCP server uses
   : {
   :   "tcp": {
   :     "threads": 30
 
-  By default, Recognizer uses an AMQP queue named: =recognizer=
+  By default, Recognizer binds the AMQP queue =recognizer= to the
+  topic exchange =graphite= with the routing key =#=
 
-  By default, Recognizer binds its AMQP queue to the exchange: =graphite=
+  Use a custom AMQP exchange
+  : {
+  :   "amqp": {
+  :     "exchange": {
+  :       "name": "metrics",
+  :       "type": "topic",
+  :       "durable": true,
+  :       "routing_key": "#"
 * License
   Recognizer is released under the [[https://github.com/portertech/recognizer/raw/master/MIT-LICENSE.txt][MIT license]].
