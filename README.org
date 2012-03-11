@@ -40,9 +40,9 @@
   :   "librato": {
   :     "metric_source": "example"
 
-  By default, Recognizer uses 20 threads for the TCP server
+  By default, Recognizer uses =20= threads for the TCP server
 
-  Specify the number of threads the TCP server uses
+  Specify the number of TCP server threads
   : {
   :   "tcp": {
   :     "threads": 30
