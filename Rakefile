@@ -7,5 +7,5 @@ task :build do
 end
 
 task :release => :build do
-  system "gem push recognizer-#{Recognizer::VERSION}"
+  system "gem push recognizer-#{Recognizer::VERSION}.gem"
 end
