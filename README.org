@@ -16,11 +16,11 @@
   :     "email": "email@example.com",
   :     "api_key": "706325cf16d84d098127e143221dd180706325cf16d84d098127e143221dd180"
   :   },
-  :   "tcp": {
-  :     "port": 2003
-  :   },
   :   "amqp": {
   :     "host": "localhost"
+  :   },
+  :   "tcp": {
+  :     "port": 2003
   :   }
   : }
 * Usage
@@ -33,6 +33,11 @@
   :  -c, --config CONFIG              The config file path
   :  -h, --help                       Show this message
 * More
+***** By default, Recognizer flushes metrics to Librato every =10= seconds
+  Set the interval to flush to Librato
+  : {
+  :   "librato": {
+  :     "flush_interval": 5
 ***** By default, Recognizer uses =recognizer= as the metric source
   Example metric path: =production.i-424242.cpu.user=
 
@@ -48,11 +53,6 @@
   : {
   :   "librato": {
   :     "metric_source": "example"
-***** By default, Recognizer flushes metrics to Librato every =10= seconds
-  Set the interval Recognizer flushes metrics to Librato
-  : {
-  :   "librato": {
-  :     "flush_interval": 5
 ***** By default, The Recognizer TCP server uses =20= threads
   Set the number of threads the TCP server uses
   : {
