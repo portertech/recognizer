@@ -1,8 +1,13 @@
 * Welcome to Recognizer
-  A Graphite Carbon AMQP impostor, sending metrics to [[https://metrics.librato.com/][Librato Metrics]].
+  A Graphite Carbon impostor, sending metrics to [[https://metrics.librato.com/][Librato Metrics]].
+
+  TCP plain text & AMQP support.
 
   [[https://github.com/portertech/recognizer/raw/master/recognizer.gif]]
 * Install
+  Executable Java JAR
+  : tbd
+  RubyGems
   : gem install recognizer
 * Configure
   Example: =config.json=
