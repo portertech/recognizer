@@ -7,8 +7,8 @@ require File.join(File.dirname(__FILE__), 'patches', 'float')
 
 module Recognizer
   class Librato
-    def initialize(thread_queue, options)
-      unless thread_queue && options.is_a?(Hash)
+    def initialize(carbon_queue, logger, options)
+      unless carbon_queue && options.is_a?(Hash)
         raise "You must provide a thread queue and options"
       end
       unless options[:librato][:email] && options[:librato][:api_key]
@@ -26,11 +26,11 @@ module Recognizer
         loop do
           sleep(options[:librato][:flush_interval] || 10)
           unless librato.empty?
-            puts "Attempting to flush metrics to Librato"
+            logger.info("Attempting to flush metrics to Librato")
             mutex.synchronize do
               librato.submit
             end
-            puts "Successfully flushed metrics to Librato"
+            logger.info("Successfully flushed metrics to Librato")
           end
         end
       end
@@ -51,7 +51,7 @@ module Recognizer
 
       Thread.new do
         loop do
-          graphite_formated = thread_queue.pop
+          graphite_formated = carbon_queue.pop
           begin
             path, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
               result << (result.empty? ? part.split(".") : Float(part).pretty)
@@ -61,11 +61,11 @@ module Recognizer
             path.delete(source)
             metric = {path.join(".") => {:value => value, :measure_time => timestamp, :source => source}}
             mutex.synchronize do
-              puts "Adding metric to queue: #{metric.inspect}"
+              logger.info("Adding metric to queue: #{metric.inspect}")
               librato.add(metric)
             end
           rescue ArgumentError
-            puts "Invalid metric: #{graphite_formated}"
+            logger.info("Invalid metric: #{graphite_formated}")
           end
         end
       end

@@ -1,6 +1,7 @@
 require "recognizer/cli"
 require "recognizer/config"
 require "recognizer/librato"
+require "recognizer/tcp"
 require "recognizer/amqp"
 
 module Recognizer
@@ -9,8 +10,13 @@ module Recognizer
     cli_options = cli.read
     config = Recognizer::Config.new(cli_options)
     config_options = config.read
-    thread_queue = Queue.new
-    Recognizer::Librato.new(thread_queue, config_options)
-    Recognizer::AMQP.new(thread_queue, config_options)
+    carbon_queue = Queue.new
+    logger = Logger.new(STDOUT)
+    Recognizer::Librato.new(carbon_queue, logger, config_options)
+    Recognizer::TCP.new(carbon_queue, logger, config_options)
+    Recognizer::AMQP.new(carbon_queue, logger, config_options)
+    loop do
+      sleep 30
+    end
   end
 end
