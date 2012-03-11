@@ -10,13 +10,17 @@ module Recognizer
         raise "You must provide a thread queue and options"
       end
 
-      worker_count = options.has_key?(:tcp) ? options[:tcp][:workers] || 20 : 20
-      tcp_server = TCPServer.new("0.0.0.0", 2003)
+      options[:tcp] ||= Hash.new
+
+      threads = options[:tcp][:threads] || 20
+      port    = options[:tcp][:port]    || 2003
+
+      tcp_server = TCPServer.new("0.0.0.0", port)
       tcp_connections = Queue.new
 
       Thread.abort_on_exception = true
 
-      worker_count.times do
+      threads.times do
         Thread.new do
           loop do
             if connection = tcp_connections.shift
@@ -39,6 +43,7 @@ module Recognizer
       end
 
       Thread.new do
+        logger.info("TCP -- Awaiting metrics with impatience ...")
         loop do
           tcp_connections.push(tcp_server.accept)
         end

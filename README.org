@@ -9,13 +9,13 @@
   : {
   :   "librato": {
   :     "email": "email@example.com",
-  :     "api_key": "706325cf16d84d098127e143221dd180706325cf16d84d098127e143221dd180",
-  :     "flush_interval": 5
+  :     "api_key": "706325cf16d84d098127e143221dd180706325cf16d84d098127e143221dd180"
   :   },
   :   "amqp": {
-  :     "host": "hostname",
-  :     "user": "username",
-  :     "pass": "password"
+  :     "host": "localhost"
+  :   },
+  :   "tcp": {
+  :     "port": 2003
   :   }
   : }
 * Usage
@@ -23,6 +23,8 @@
   :  -c, --config CONFIG              The config file path
   :  -h, --help                       Show this message
 * More
+  By default, Recognizer uses the source: =recognizer=
+
   Example metric path: =production.i-424242.cpu.user=
 
   Extract the metric source from the metric path using a regular expression
@@ -37,6 +39,16 @@
   : {
   :   "librato": {
   :     "metric_source": "example"
-  By default, Recognizer uses the source: =recognizer=
+
+  By default, Recognizer uses 20 threads for the TCP server
+
+  Specify the number of threads the TCP server uses
+  : {
+  :   "tcp": {
+  :     "threads": 30
+
+  By default, Recognizer uses an AMQP queue named: =recognizer=
+
+  By default, Recognizer binds its AMQP queue to the exchange: =graphite=
 * License
   Recognizer is released under the [[https://github.com/portertech/recognizer/raw/master/MIT-LICENSE.txt][MIT license]].

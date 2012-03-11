@@ -4,4 +4,5 @@ vendor/*
 pkg/*
 *.gem
 *.jar
+.DS_Store
 config.json
