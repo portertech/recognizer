@@ -16,11 +16,11 @@
   :     "email": "email@example.com",
   :     "api_key": "706325cf16d84d098127e143221dd180706325cf16d84d098127e143221dd180"
   :   },
-  :   "amqp": {
-  :     "host": "localhost"
-  :   },
   :   "tcp": {
   :     "port": 2003
+  :   },
+  :   "amqp": {
+  :     "host": "localhost"
   :   }
   : }
 * Usage
@@ -33,7 +33,7 @@
   :  -c, --config CONFIG              The config file path
   :  -h, --help                       Show this message
 * More
-*****  By default, Recognizer uses =recognizer= as the metric source
+***** By default, Recognizer uses =recognizer= as the metric source
   Example metric path: =production.i-424242.cpu.user=
 
   Extract the metric source from the metric path using a regular expression
@@ -44,16 +44,21 @@
   : {
   :   "librato": {
   :     "metric_source": 1
-  Or define a static source
+  Or set a static source
   : {
   :   "librato": {
   :     "metric_source": "example"
-*****  By default, The Recognizer TCP server uses =20= threads
-  Specify the number of threads the TCP server uses
+***** By default, Recognizer flushes metrics to Librato every =10= seconds
+  Set the interval Recognizer flushes metrics to Librato
+  : {
+  :   "librato": {
+  :     "flush_interval": 5
+***** By default, The Recognizer TCP server uses =20= threads
+  Set the number of threads the TCP server uses
   : {
   :   "tcp": {
   :     "threads": 30
-*****  By default, Recognizer binds the AMQP queue =recognizer= to the topic exchange =graphite= with the routing key =#=
+***** By default, Recognizer binds the AMQP queue =recognizer= to the topic exchange =graphite= with the routing key =#=
   Use a custom AMQP exchange
   : {
   :   "amqp": {
