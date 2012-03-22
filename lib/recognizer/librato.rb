@@ -28,7 +28,11 @@ module Recognizer
           unless librato.empty?
             logger.info("Attempting to flush metrics to Librato")
             mutex.synchronize do
-              librato.submit
+              begin
+                librato.submit
+              rescue => error
+                logger.error("Encountered an error when flushing metrics to Librato: " + error.to_s)
+              end
             end
             logger.info("Successfully flushed metrics to Librato")
           end
