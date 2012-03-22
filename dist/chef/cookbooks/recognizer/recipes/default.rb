@@ -7,8 +7,16 @@
 # All rights reserved - Do Not Redistribute
 #
 
-gem_package "recognizer" do
-  version node.recognizer.version
+execute "recognizer_deployed" do
+  command "true"
+  action :nothing
+end
+
+case node.recognizer.installation
+when "jar"
+  include_recipe "recognizer::jar"
+when "bundler"
+  include_recipe "recognizer::bundler"
 end
 
 directory node.recognizer.directory do
@@ -40,6 +48,11 @@ user node.recognizer.user do
   home node.recognizer.directory
 end
 
+directory "/var/log/recognizer" do
+  owner node.recognizer.user
+  mode 0755
+end
+
 file File.join(node.recognizer.directory, "config.json") do
   content Recognizer.generate_config(node)
   mode 0644
@@ -49,13 +62,17 @@ case node[:platform]
 when "ubuntu", "debian"
   template "/etc/init/recognizer.conf" do
     source "upstart.erb"
-    variables :options => "-c #{node.recognizer.directory}/config.json"
+    variables(
+      :directory => node.recognizer.service.directory,
+      :command => node.recognizer.service.command,
+      :options => "-c #{node.recognizer.directory}/config.json"
+    )
     mode 0644
   end
 
   service "recognizer" do
     provider Chef::Provider::Service::Upstart
     action [:enable, :start]
-    subscribes :restart, resources(:file => File.join(node.recognizer.directory, "config.json"), :gem_package => "recognizer"), :delayed
+    subscribes :restart, resources(:file => File.join(node.recognizer.directory, "config.json"), :execute => "recognizer_deployed"), :delayed
   end
 end
