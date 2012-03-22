@@ -8,8 +8,5 @@ stop on [!12345]
 
 respawn
 
-pre-start script
-  test -x <%= Recognizer.find_bin %> || { stop; exit 0; }
-end script
-
-exec sudo -u <%= node.recognizer.user %> sh -c "<%= Recognizer.find_bin %><% if @options %> <%= @options %><% end %>"
+chdir <%= @directory %>
+exec sudo -u <%= node.recognizer.user %> sh -c "<%= @command %><%= " #{@options}" if @options %> >> /var/log/recognizer/recognizer.log 2>&1"
