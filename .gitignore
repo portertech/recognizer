@@ -4,5 +4,6 @@ vendor/*
 pkg/*
 *.gem
 *.jar
+.vagrant
 .DS_Store
 config.json
