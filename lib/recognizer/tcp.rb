@@ -35,6 +35,7 @@ module Recognizer
                   end
                 end
               rescue Timeout::Error
+                logger.warn("TCP -- A connection has timed out")
                 connection.close
               end
             end
