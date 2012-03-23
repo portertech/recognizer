@@ -31,7 +31,7 @@ module Recognizer
               begin
                 librato.submit
               rescue => error
-                logger.error("Encountered an error when flushing metrics to Librato: " + error.to_s)
+                logger.error("Encountered an error when flushing metrics to Librato :: #{error}")
               end
             end
             logger.info("Successfully flushed metrics to Librato")
@@ -58,18 +58,29 @@ module Recognizer
           graphite_formated = carbon_queue.pop
           begin
             path, value, timestamp = graphite_formated.split(" ").inject([]) do |result, part|
-              result << (result.empty? ? part.split(".") : Float(part).pretty)
+              result << case
+              when result.empty?
+                unless part =~ /^[A-Za-z0-9\._-]*$/
+                  raise "metric name must only consist of alpha-numeric characters, periods, underscores, and dashes"
+                end
+                unless part.size <= 63
+                  raise "metric name must be 63 or fewer characters"
+                end
+                part.split(".")
+              else
+                Float(part).pretty
+              end
               result
             end
             source = get_source.call(path)
             path.delete(source)
             metric = {path.join(".") => {:value => value, :measure_time => timestamp, :source => source}}
             mutex.synchronize do
-              logger.info("Adding metric to queue: #{metric.inspect}")
+              logger.info("Adding metric to queue :: #{metric.inspect}")
               librato.add(metric)
             end
-          rescue ArgumentError
-            logger.info("Invalid metric: #{graphite_formated}")
+          rescue => error
+            logger.info("Invalid metric :: #{graphite_formated} :: #{error}")
           end
         end
       end
