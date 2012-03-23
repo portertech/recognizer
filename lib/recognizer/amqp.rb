@@ -21,7 +21,7 @@ module Recognizer
         amqp.start
 
         exchange = amqp.exchange(exchange_name, :type => exchange_type.to_sym, :durable => durable)
-        queue = amqp.queue("recognizer")
+        queue    = amqp.queue("recognizer")
         queue.bind(exchange, :key => routing_key)
 
         Thread.abort_on_exception = true
@@ -31,6 +31,7 @@ module Recognizer
           queue.subscribe do |message|
             payload         = message[:payload]
             msg_routing_key = message[:routing_key] || message[:delivery_details][:routing_key]
+
             lines = payload.split("\n")
             lines.each do |line|
               line = line.strip
