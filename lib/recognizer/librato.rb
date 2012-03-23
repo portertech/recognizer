@@ -62,9 +62,6 @@ module Recognizer
             unless parts.first =~ /^[A-Za-z0-9\._-]*$/
               raise "metric name must only consist of alpha-numeric characters, periods, underscores, and dashes"
             end
-            unless parts.first.size <= 63
-              raise "metric name must be 63 or fewer characters"
-            end
 
             path      = parts.shift.split(".")
             value     = Float(parts.shift).pretty
@@ -73,7 +70,13 @@ module Recognizer
 
             path.delete(source)
 
-            metric = {path.join(".") => {:value => value, :measure_time => timestamp, :source => source}}
+            name = path.join(".")
+
+            unless name.size <= 63
+              raise "metric name must be 63 or fewer characters"
+            end
+
+            metric = {name => {:value => value, :measure_time => timestamp, :source => source}}
 
             mutex.synchronize do
               logger.info("Adding metric to queue :: #{metric.inspect}")
