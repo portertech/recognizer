@@ -15,7 +15,7 @@ module Recognizer
       threads = options[:tcp][:threads] || 20
       port    = options[:tcp][:port]    || 2003
 
-      tcp_server = TCPServer.new("0.0.0.0", port)
+      tcp_server      = TCPServer.new("0.0.0.0", port)
       tcp_connections = Queue.new
 
       Thread.abort_on_exception = true
