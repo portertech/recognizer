@@ -24,19 +24,11 @@ module Recognizer
         Thread.new do
           loop do
             if connection = tcp_connections.shift
-              begin
-                lines = timeout(12) do
-                  connection.gets.split("\n")
+              while line = connection.gets
+                line = line.strip
+                if line.split("\s").count == 3
+                  carbon_queue.push(line)
                 end
-                lines.each do |line|
-                  line = line.strip
-                  if line.split("\s").count == 3
-                    carbon_queue.push(line)
-                  end
-                end
-              rescue Timeout::Error
-                logger.warn("TCP -- A connection has timed out")
-                connection.close
               end
             end
           end
