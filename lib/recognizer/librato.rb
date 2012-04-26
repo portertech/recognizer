@@ -3,7 +3,11 @@ require "recognizer/version"
 require "thread"
 require "librato/metrics"
 
-require File.join(File.dirname(__FILE__), 'patches', 'float')
+require File.join(File.dirname(__FILE__), "patches", "float")
+
+if RUBY_PLATFORM == "java"
+  require File.join(File.dirname(__FILE__), "patches", "openssl")
+end
 
 module Recognizer
   class Librato
@@ -62,7 +66,6 @@ module Recognizer
             unless parts.first =~ /^[A-Za-z0-9\._-]*$/
               raise "metric name must only consist of alpha-numeric characters, periods, underscores, and dashes"
             end
-
             unless parts.last =~ /^[0-9]{10}$/
               raise "metric timestamp must be epoch, 10 digits"
             end

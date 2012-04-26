@@ -1,20 +1,10 @@
 class Hash
-  def symbolize_keys(item=self)
-    case item
-    when Array
-      item.map do |i|
-        symbolize_keys(i)
-      end
-    when Hash
-      Hash[
-           item.map do |key, value|
-             new_key = key.is_a?(String) ? key.to_sym : key
-             new_value = symbolize_keys(value)
-             [new_key, new_value]
-           end
-          ]
-    else
-      item
+  def symbolize_keys
+    inject(Hash.new) do |result, (key, value)|
+      new_key = key.is_a?(String) ? key.to_sym : key
+      new_value = value.is_a?(Hash) ? value.symbolize_keys : value
+      result[new_key] = new_value
+      result
     end
   end
 end

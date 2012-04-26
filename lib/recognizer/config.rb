@@ -1,7 +1,7 @@
 require "rubygems"
 require "json"
 
-require File.join(File.dirname(__FILE__), 'patches', 'hash')
+require File.join(File.dirname(__FILE__), "patches", "hash")
 
 module Recognizer
   class Config
@@ -10,7 +10,7 @@ module Recognizer
         raise "Missing config file path"
       end
       if File.readable?(options[:config_file])
-        config_file_contents = File.open(options[:config_file], 'r').read
+        config_file_contents = File.open(options[:config_file], "r").read
         begin
           @config = JSON.parse(config_file_contents)
         rescue JSON::ParserError => error
