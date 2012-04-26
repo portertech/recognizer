@@ -1,4 +1,4 @@
-require 'lib/recognizer/version'
+require "lib/recognizer/version"
 
 task :build do
   system "gem build recognizer.gemspec"
