@@ -63,6 +63,10 @@ module Recognizer
               raise "metric name must only consist of alpha-numeric characters, periods, underscores, and dashes"
             end
 
+            unless parts.last =~ /^[0-9]{10}$/
+              raise "metric timestamp must be epoch, 10 digits"
+            end
+
             path      = parts.shift.split(".")
             value     = Float(parts.shift).pretty
             timestamp = Float(parts.shift).pretty

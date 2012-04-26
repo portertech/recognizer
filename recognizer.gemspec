@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency("json")
   s.add_dependency("mixlib-cli", ">= 1.1.0")
   s.add_dependency("bunny", "0.7.9")
-  s.add_dependency("librato-metrics", "0.4.2")
+  s.add_dependency("librato-metrics", "0.6.0.pre3")
 end
