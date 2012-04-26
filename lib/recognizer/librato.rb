@@ -30,11 +30,11 @@ module Recognizer
             mutex.synchronize do
               begin
                 librato.submit
+                logger.info("Successfully flushed metrics to Librato")
               rescue => error
                 logger.error("Encountered an error when flushing metrics to Librato :: #{error}")
               end
             end
-            logger.info("Successfully flushed metrics to Librato")
           end
         end
       end
