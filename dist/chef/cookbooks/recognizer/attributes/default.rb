@@ -1,5 +1,5 @@
 default.recognizer.installation = "jar"
-default.recognizer.version = "0.1.1"
+default.recognizer.version = "0.1.6"
 default.recognizer.directory = "/etc/recognizer"
 default.recognizer.user = "recognizer"
 
