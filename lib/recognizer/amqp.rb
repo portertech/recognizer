@@ -2,6 +2,10 @@ require "rubygems"
 require "thread"
 require "bunny"
 
+if RUBY_PLATFORM == "java"
+  require File.join(File.dirname(__FILE__), "patches", "openssl")
+end
+
 module Recognizer
   class AMQP
     def initialize(carbon_queue, logger, options)
