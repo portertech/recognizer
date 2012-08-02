@@ -1,9 +1,8 @@
 require "recognizer/version"
+require "recognizer/patches/float"
+require "recognizer/patches/openssl"
 require "thread"
 require "librato/metrics"
-
-require File.join(File.dirname(__FILE__), "patches", "float")
-require File.join(File.dirname(__FILE__), "patches", "openssl")
 
 module Recognizer
   class Librato

@@ -18,14 +18,14 @@ module Recognizer
     )
     librato.run
 
-    tcp = Recognizer::TCP.new(
+    tcp = Recognizer::Input::TCP.new(
       :logger       => logger,
       :options      => config.options,
       :carbon_queue => queue
     )
     tcp.run
 
-    amqp = Recognizer::AMQP.new(
+    amqp = Recognizer::Input::AMQP.new(
       :logger       => logger,
       :options      => config.options,
       :carbon_queue => queue
