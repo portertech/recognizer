@@ -1,7 +1,7 @@
 require "thread"
 require "bunny"
 
-require File.join(File.dirname(__FILE__), "patches", "openssl")
+require File.join(File.dirname(__FILE__), "..", "patches", "openssl")
 
 module Recognizer
   class AMQP

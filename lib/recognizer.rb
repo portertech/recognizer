@@ -1,8 +1,8 @@
 require "recognizer/cli"
 require "recognizer/config"
 require "recognizer/librato"
-require "recognizer/tcp"
-require "recognizer/amqp"
+require "recognizer/inputs/tcp"
+require "recognizer/inputs/amqp"
 
 module Recognizer
   def self.run
