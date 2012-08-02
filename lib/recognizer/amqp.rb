@@ -1,55 +1,68 @@
-require "rubygems"
 require "thread"
 require "bunny"
 
-if RUBY_PLATFORM == "java"
-  require File.join(File.dirname(__FILE__), "patches", "openssl")
-end
+require File.join(File.dirname(__FILE__), "patches", "openssl")
 
 module Recognizer
   class AMQP
-    def initialize(carbon_queue, logger, options)
-      unless carbon_queue && options.is_a?(Hash)
-        raise "You must provide a thread queue and options"
+    def initialize(options={})
+      @logger       = options[:logger]
+      @options      = options[:options]
+      @carbon_queue = options[:carbon_queue]
+
+      Thread.abort_on_exception = true
+    end
+
+    def run
+      if @options.has_key?(:amqp)
+        setup_amqp_options
+        setup_amqp_consumer
+      else
+        @logger.warn("AMQP -- Not configured")
       end
+    end
 
-      if options.has_key?(:amqp)
-        options[:amqp][:exchange] ||= Hash.new
+    private
 
-        exchange_name = options[:amqp][:exchange][:name]        || "graphite"
-        durable       = options[:amqp][:exchange][:durable]     || false
-        routing_key   = options[:amqp][:exchange][:routing_key] || "#"
-        exchange_type = options[:amqp][:exchange][:type]        || :topic
+    def setup_amqp_options
+      @options[:amqp][:exchange]               ||= Hash.new
+      @options[:amqp][:exchange][:name]        ||= "graphite"
+      @options[:amqp][:exchange][:durable]     ||= false
+      @options[:amqp][:exchange][:routing_key] ||= "#"
+      @options[:amqp][:exchange][:type]        ||= (@options[:amqp][:exchange][:type] || "topic").to_sym
+    end
 
-        amqp = Bunny.new(options[:amqp].reject { |key, value| key == :exchange })
-        amqp.start
+    def setup_amqp_consumer
+      amqp = Bunny.new(@options[:amqp].reject { |key, value| key == :exchange })
+      amqp.start
 
-        exchange = amqp.exchange(exchange_name, :type => exchange_type.to_sym, :durable => durable)
-        queue    = amqp.queue("recognizer")
-        queue.bind(exchange, :key => routing_key)
+      exchange = amqp.exchange(@options[:amqp][:exchange][:name], {
+        :type    => @options[:amqp][:exchange][:type],
+        :durable => @options[:amqp][:exchange][:durable]
+      })
 
-        Thread.abort_on_exception = true
+      queue = amqp.queue("recognizer")
+      queue.bind(exchange, {
+        :key => @options[:amqp][:exchange][:routing_key]
+      })
 
-        Thread.new do
-          logger.info("AMQP -- Awaiting metrics with impatience ...")
-          queue.subscribe do |message|
-            payload         = message[:payload]
-            msg_routing_key = message[:routing_key] || message[:delivery_details][:routing_key]
-
-            lines = payload.split("\n")
-            lines.each do |line|
-              line = line.strip
-              case line.split("\s").count
-              when 3
-                carbon_queue.push(line)
-              when 2
-                carbon_queue.push("#{msg_routing_key} #{line}")
-              end
+      Thread.new do
+        @logger.info("AMQP -- Awaiting metrics with impatience ...")
+        queue.subscribe do |message|
+          msg_routing_key = message[:routing_key] || message[:delivery_details][:routing_key]
+          lines           = message[:payload].split("\n")
+          lines.each do |line|
+            line = line.strip
+            case line.split("\s").count
+            when 3
+              @carbon_queue.push(line)
+            when 2
+              @carbon_queue.push("#{msg_routing_key} #{line}")
+            else
+              @logger.warn("AMQP -- Received malformed metric :: #{msg_routing_key} :: #{line}")
             end
           end
         end
-      else
-        logger.warn("AMQP -- Not configured")
       end
     end
   end

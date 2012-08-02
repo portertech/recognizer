@@ -1,4 +1,3 @@
-require "rubygems"
 require "mixlib/cli"
 
 module Recognizer
@@ -19,7 +18,7 @@ module Recognizer
       :show_options => true,
       :exit => 0
 
-    def read
+    def options
       parse_options
       config
     end

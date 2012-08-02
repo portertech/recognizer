@@ -6,15 +6,32 @@ require "recognizer/amqp"
 
 module Recognizer
   def self.run
-    cli = Recognizer::CLI.new
-    cli_options = cli.read
-    config = Recognizer::Config.new(cli_options)
-    config_options = config.read
-    carbon_queue = Queue.new
     logger = Logger.new(STDOUT)
-    Recognizer::Librato.new(carbon_queue, logger, config_options)
-    Recognizer::TCP.new(carbon_queue, logger, config_options)
-    Recognizer::AMQP.new(carbon_queue, logger, config_options)
+    queue  = Queue.new
+    cli    = Recognizer::CLI.new
+    config = Recognizer::Config.new(cli.options)
+
+    librato = Recognizer::Librato.new(
+      :logger       => logger,
+      :options      => config.options,
+      :carbon_queue => queue
+    )
+    librato.run
+
+    tcp = Recognizer::TCP.new(
+      :logger       => logger,
+      :options      => config.options,
+      :carbon_queue => queue
+    )
+    tcp.run
+
+    amqp = Recognizer::AMQP.new(
+      :logger       => logger,
+      :options      => config.options,
+      :carbon_queue => queue
+    )
+    amqp.run
+
     loop do
       sleep 30
     end
