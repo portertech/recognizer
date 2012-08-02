@@ -6,29 +6,29 @@ require "recognizer/inputs/amqp"
 
 module Recognizer
   def self.run
-    logger = Logger.new(STDOUT)
-    queue  = Queue.new
-    cli    = Recognizer::CLI.new
-    config = Recognizer::Config.new(cli.options)
+    logger      = Logger.new(STDOUT)
+    input_queue = Queue.new
+    cli         = Recognizer::CLI.new
+    config      = Recognizer::Config.new(cli.options)
 
     librato = Recognizer::Librato.new(
-      :logger       => logger,
-      :options      => config.options,
-      :carbon_queue => queue
+      :logger      => logger,
+      :options     => config.options,
+      :input_queue => input_queue
     )
     librato.run
 
     tcp = Recognizer::Input::TCP.new(
-      :logger       => logger,
-      :options      => config.options,
-      :carbon_queue => queue
+      :logger      => logger,
+      :options     => config.options,
+      :input_queue => input_queue
     )
     tcp.run
 
     amqp = Recognizer::Input::AMQP.new(
-      :logger       => logger,
-      :options      => config.options,
-      :carbon_queue => queue
+      :logger      => logger,
+      :options     => config.options,
+      :input_queue => input_queue
     )
     amqp.run
 

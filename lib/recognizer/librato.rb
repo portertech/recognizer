@@ -7,9 +7,9 @@ require "librato/metrics"
 module Recognizer
   class Librato
     def initialize(options={})
-      @logger       = options[:logger]
-      @options      = options[:options]
-      @carbon_queue = options[:carbon_queue]
+      @logger      = options[:logger]
+      @options     = options[:options]
+      @input_queue = options[:input_queue]
 
       ::Librato::Metrics.authenticate(@options[:librato][:email], @options[:librato][:api_key])
       ::Librato::Metrics.agent_identifier("recognizer", Recognizer::VERSION, "portertech")
@@ -20,13 +20,13 @@ module Recognizer
     end
 
     def run
-      setup_librato_publisher
-      setup_carbon_consumer
+      setup_publisher
+      setup_consumer
     end
 
     private
 
-    def setup_librato_publisher
+    def setup_publisher
       Thread.new do
         loop do
           sleep(@options[:librato][:flush_interval] || 10)
@@ -45,29 +45,8 @@ module Recognizer
       end
     end
 
-    def source_pattern
-      return @source_pattern if @source_pattern
-      @source_pattern = Regexp.new(@options[:librato][:metric_source].delete("/"))
-    end
-
-    def get_source
-      return @get_source if @get_source
-      @get_source = case @options[:librato][:metric_source]
-      when String
-        if @options[:librato][:metric_source].match("^/.*/$")
-          Proc.new { |path| (matched = path.grep(source_pattern).first) ? matched : "recognizer" }
-        else
-          Proc.new { @options[:librato][:metric_source] }
-        end
-      when Integer
-        Proc.new { |path| path.slice(@options[:librato][:metric_source]) }
-      else
-        Proc.new { "recognizer" }
-      end
-    end
-
-    def invalid_metric(carbon_formatted, message)
-      @logger.warn("Invalid metric :: #{carbon_formatted} :: #{message}")
+    def invalid_metric(metric, message)
+      @logger.warn("Invalid metric :: #{metric.inspect} :: #{message}")
       false
     end
 
@@ -84,32 +63,56 @@ module Recognizer
       end
     end
 
+    def metric_source(path)
+      @metric_source ||= case @options[:librato][:metric_source]
+      when String
+        if @options[:librato][:metric_source].match("^/.*/$")
+          @source_pattern = Regexp.new(@options[:librato][:metric_source].delete("/"))
+          Proc.new { |path| (matched = path.grep(@source_pattern).first) ? matched : "recognizer" }
+        else
+          Proc.new { @options[:librato][:metric_source] }
+        end
+      when Integer
+        Proc.new { |path| path.slice(@options[:librato][:metric_source]) }
+      else
+        Proc.new { "recognizer" }
+      end
+      @metric_source.call(path)
+    end
+
     def create_metric(carbon_formatted)
       if valid_carbon_metric?(carbon_formatted)
         parts     = carbon_formatted.split("\s")
+
         path      = parts.shift.split(".")
         value     = Float(parts.shift).pretty
         timestamp = Float(parts.shift).pretty
-        source    = get_source.call(path)
+        source    = metric_source(path)
 
         path.delete(source)
 
-        name = path.join(".")
+        metric = {
+          path.join(".") => {
+            :value => value,
+            :measure_time => timestamp,
+            :source => source
+          }
+        }
 
-        if name.size <= 63
-          { name => { :value => value, :measure_time => timestamp, :source => source } }
+        unless name.size <= 63
+          invalid_metric(metric, "Metric name must be 63 or fewer characters")
         else
-          invalid_metric(carbon_formatted, "Metric name must be 63 or fewer characters")
+          metric
         end
       else
         false
       end
     end
 
-    def setup_carbon_consumer
+    def setup_consumer
       Thread.new do
         loop do
-          if metric = create_metric(@carbon_queue.shift)
+          if metric = create_metric(@input_queue.shift)
             @logger.info("Adding metric to Librato queue :: #{metric.inspect}")
             @librato_mutex.synchronize do
               @librato_queue.add(metric)

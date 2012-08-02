@@ -5,9 +5,9 @@ module Recognizer
   module Input
     class TCP
       def initialize(options={})
-        @logger       = options[:logger]
-        @options      = options[:options]
-        @carbon_queue = options[:carbon_queue]
+        @logger      = options[:logger]
+        @options     = options[:options]
+        @input_queue = options[:input_queue]
 
         @options[:tcp] ||= Hash.new
         @tcp_connections = Queue.new
@@ -40,7 +40,7 @@ module Recognizer
               while line = connection.gets
                 line = line.strip
                 if line.split("\s").count == 3
-                  @carbon_queue.push(line)
+                  @input_queue.push(line)
                 else
                   @logger.warn("TCP -- Received malformed metric :: #{line}")
                 end

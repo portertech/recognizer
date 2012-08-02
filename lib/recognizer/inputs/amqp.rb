@@ -6,17 +6,17 @@ module Recognizer
   module Input
     class AMQP
       def initialize(options={})
-        @logger       = options[:logger]
-        @options      = options[:options]
-        @carbon_queue = options[:carbon_queue]
+        @logger      = options[:logger]
+        @options     = options[:options]
+        @input_queue = options[:input_queue]
 
         Thread.abort_on_exception = true
       end
 
       def run
         if @options.has_key?(:amqp)
-          setup_amqp_options
-          setup_amqp_consumer
+          set_default_options
+          setup_consumer
         else
           @logger.warn("AMQP -- Not configured")
         end
@@ -24,7 +24,7 @@ module Recognizer
 
       private
 
-      def setup_amqp_options
+      def set_default_options
         @options[:amqp][:exchange]               ||= Hash.new
         @options[:amqp][:exchange][:name]        ||= "graphite"
         @options[:amqp][:exchange][:durable]     ||= false
@@ -32,7 +32,7 @@ module Recognizer
         @options[:amqp][:exchange][:type]        ||= (@options[:amqp][:exchange][:type] || "topic").to_sym
       end
 
-      def setup_amqp_consumer
+      def setup_consumer
         amqp = Bunny.new(@options[:amqp].reject { |key, value| key == :exchange })
         amqp.start
 
@@ -55,9 +55,9 @@ module Recognizer
               line = line.strip
               case line.split("\s").count
               when 3
-                @carbon_queue.push(line)
+                @input_queue.push(line)
               when 2
-                @carbon_queue.push("#{msg_routing_key} #{line}")
+                @input_queue.push("#{msg_routing_key} #{line}")
               else
                 @logger.warn("AMQP -- Received malformed metric :: #{msg_routing_key} :: #{line}")
               end
