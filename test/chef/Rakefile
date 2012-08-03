@@ -1,0 +1,7 @@
+task :clean do
+  system "rm -rf *.lock cookbooks tmp"
+end
+
+task :cookbooks => :clean do
+  system "librarian-chef install"
+end
