@@ -73,7 +73,7 @@ module Recognizer
           Proc.new { @options[:librato][:metric_source] }
         end
       when Integer
-        Proc.new { |path| path.slice(@options[:librato][:metric_source]) }
+        Proc.new { |path| path.slice(@options[:librato][:metric_source]) || "recognizer" }
       else
         Proc.new { "recognizer" }
       end
