@@ -1,8 +1,10 @@
 .bundle
-Gemfile.lock
+*.lock
 *.gem
 *.jar
 *.tar
 .vagrant
 .DS_Store
 config.json
+test/chef/cookbooks/*
+test/chef/tmp/*

@@ -1,0 +1,6 @@
+site "http://community.opscode.com/api/v1"
+
+cookbook "java"
+cookbook "rabbitmq", "1.4.0"
+cookbook "recognizer",
+  :git => "https://github.com/portertech/chef-recognizer"
