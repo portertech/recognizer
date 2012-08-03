@@ -31,8 +31,8 @@ module Recognizer
         loop do
           sleep(@options[:librato][:flush_interval] || 10)
           unless @librato_queue.empty?
+            @logger.info("Attempting to flush metrics to Librato")
             @librato_mutex.synchronize do
-              @logger.info("Attempting to flush metrics to Librato")
               begin
                 @librato_queue.submit
                 @logger.info("Successfully flushed metrics to Librato")
