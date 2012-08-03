@@ -1,4 +1,3 @@
-require "rubygems"
 require "mixlib/cli"
 
 module Recognizer
