@@ -1,9 +1,8 @@
 .bundle
 Gemfile.lock
-vendor/*
-pkg/*
 *.gem
 *.jar
+*.tar
 .vagrant
 .DS_Store
 config.json

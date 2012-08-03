@@ -12,10 +12,14 @@ task :test  do
   end
 end
 
-task :build do
+task :clean do
+  system "rm -rf *.gem *.jar *.tar"
+end
+
+task :build => :clean do
   system "gem build recognizer.gemspec"
-  File.delete("recognizer.jar")
   system "warble executable jar"
+  system "tar -cf recognizer-#{Recognizer::VERSION}.tar recognizer.jar"
 end
 
 task :release => :build do
@@ -23,3 +27,4 @@ task :release => :build do
   system "git push --tags"
   system "gem push recognizer-#{Recognizer::VERSION}.gem"
 end
+
