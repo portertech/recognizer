@@ -25,7 +25,7 @@ module Recognizer
       end
     end
 
-    def options
+    def read
       @config
     end
   end

@@ -91,8 +91,10 @@ module Recognizer
 
         path.delete(source)
 
+        name = path.join(".")
+
         metric = {
-          path.join(".") => {
+          name => {
             :value => value,
             :measure_time => timestamp,
             :source => source

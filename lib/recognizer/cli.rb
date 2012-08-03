@@ -18,7 +18,7 @@ module Recognizer
       :show_options => true,
       :exit => 0
 
-    def options
+    def read
       parse_options
       config
     end

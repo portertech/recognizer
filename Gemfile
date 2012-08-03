@@ -1,12 +1,13 @@
-source "http://rubygems.org"
+source :rubygems
 
 gem("jruby-openssl", "0.7.4")
 gem("json")
-gem("mixlib-cli", ">= 1.1.0")
-gem("bunny", "0.7.9")
-gem("librato-metrics", "0.6.0.pre3")
+gem("mixlib-cli", "1.2.2")
+gem("bunny", "0.8.0")
+gem("librato-metrics", "0.7.0")
 
 group :development do
   gem("rake")
   gem("warbler")
+  gem("minitest")
 end
