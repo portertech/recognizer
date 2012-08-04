@@ -4,7 +4,7 @@ class TestAMQPInput < MiniTest::Unit::TestCase
   include TestHelper
 
   def test_amqp_consumer
-    amqp_input
+    setup_amqp_input
     sleep 2
     metrics = [
       "foo 42 #{Time.now.to_i}",
