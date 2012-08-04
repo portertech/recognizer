@@ -7,8 +7,8 @@ task :default => "test"
 
 task :test  do
   require File.join(File.dirname(__FILE__), 'test', 'helper')
-  Dir['test/*_test.rb'].each do |test|
-    require File.join(File.dirname(__FILE__), test)
+  Dir['test/*_tests.rb'].each do |tests|
+    require File.join(File.dirname(__FILE__), tests)
   end
 end
 
