@@ -24,27 +24,6 @@ module Recognizer
       setup_consumer
     end
 
-    private
-
-    def setup_publisher
-      Thread.new do
-        loop do
-          sleep(@options[:librato][:flush_interval] || 10)
-          unless @librato_queue.empty?
-            @logger.info("Attempting to flush metrics to Librato")
-            @librato_mutex.synchronize do
-              begin
-                @librato_queue.submit
-                @logger.info("Successfully flushed metrics to Librato")
-              rescue => error
-                @logger.error("Encountered an error when flushing metrics to Librato :: #{error}")
-              end
-            end
-          end
-        end
-      end
-    end
-
     def invalid_metric(metric, message)
       @logger.warn("Invalid metric :: #{metric.inspect} :: #{message}")
       false
@@ -52,11 +31,11 @@ module Recognizer
 
     def valid_carbon_metric?(carbon_formatted)
       parts = carbon_formatted.split("\s")
-      if !parts[0] =~ /^[A-Za-z0-9\._-]*$/
+      if parts[0] !~ /^[A-Za-z0-9\._-]*$/
         invalid_metric(carbon_formatted, "Metric name must only consist of alpha-numeric characters, periods, underscores, and dashes")
-      elsif !parts[1] =~ /^[0-9]*\.?[0-9]*$/
+      elsif parts[1] !~ /^[0-9]*\.?[0-9]*$/
         invalid_metric(carbon_formatted, "Metric value must be an integer or float")
-      elsif !parts[2] =~ /^[0-9]{10}$/
+      elsif parts[2] !~ /^[0-9]{10}$/
         invalid_metric(carbon_formatted, "Metric timestamp must be epoch, 10 digits")
       else
         true
@@ -108,6 +87,27 @@ module Recognizer
         end
       else
         false
+      end
+    end
+
+    private
+
+    def setup_publisher
+      Thread.new do
+        loop do
+          sleep(@options[:librato][:flush_interval] || 10)
+          unless @librato_queue.empty?
+            @logger.info("Attempting to flush metrics to Librato")
+            @librato_mutex.synchronize do
+              begin
+                @librato_queue.submit
+                @logger.info("Successfully flushed metrics to Librato")
+              rescue => error
+                @logger.error("Encountered an error when flushing metrics to Librato :: #{error}")
+              end
+            end
+          end
+        end
       end
     end
 
