@@ -3,6 +3,8 @@
 
   TCP plain text & AMQP support.
 
+  [[https://secure.travis-ci.org/portertech/recognizer.png]]
+
   [[https://github.com/portertech/recognizer/raw/master/recognizer.gif]]
 * Install
   Executable Java JAR (recommended)
