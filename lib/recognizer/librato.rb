@@ -87,7 +87,8 @@ module Recognizer
             }
           }
         else
-          invalid_metric(plain_text, "Metric name must be 63 or fewer characters after source extraction")
+          message = "Metric name must be 63 or fewer characters after source extraction"
+          invalid_metric(plain_text, message)
         end
       else
         false
