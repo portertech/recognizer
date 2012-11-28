@@ -1,5 +1,4 @@
 require "recognizer/version"
-require "recognizer/patches/float"
 require "recognizer/patches/openssl"
 require "thread"
 require "librato/metrics"
@@ -13,6 +12,7 @@ module Recognizer
 
       ::Librato::Metrics.authenticate(@options[:librato][:email], @options[:librato][:api_key])
       ::Librato::Metrics.agent_identifier("recognizer", Recognizer::VERSION, "portertech")
+
       @librato_queue = ::Librato::Metrics::Queue.new
       @librato_mutex = Mutex.new
 
@@ -24,66 +24,70 @@ module Recognizer
       setup_consumer
     end
 
-    def invalid_metric(metric, message)
-      @logger.warn("Invalid metric :: #{metric.inspect} :: #{message}")
+    def invalid_metric(plain_text, message)
+      @logger.warn("Invalid metric :: #{plain_text} :: #{message}")
       false
     end
 
-    def valid_carbon_metric?(carbon_formatted)
-      parts = carbon_formatted.split("\s")
-      if parts[0] !~ /^[A-Za-z0-9\._-]*$/
-        invalid_metric(carbon_formatted, "Metric name must only consist of alpha-numeric characters, periods, underscores, and dashes")
-      elsif parts[1] !~ /^[0-9]*\.?[0-9]*$/
-        invalid_metric(carbon_formatted, "Metric value must be an integer or float")
-      elsif parts[2] !~ /^[0-9]{10}$/
-        invalid_metric(carbon_formatted, "Metric timestamp must be epoch, 10 digits")
+    def valid_plain_text?(plain_text)
+      segments = plain_text.split("\s")
+      if segments[0] !~ /^[A-Za-z0-9\._-]*$/
+        message = "Metric name must only consist of alpha-numeric characters, periods, underscores, and dashes"
+        invalid_metric(plain_text, message)
+      elsif segments[1] !~ /^[0-9]*\.?[0-9]*$/
+        invalid_metric(plain_text, "Metric value must be an integer or float")
+      elsif segments[2] !~ /^[0-9]{10}$/
+        invalid_metric(plain_text, "Metric timestamp must be epoch, 10 digits")
       else
         true
       end
     end
 
-    def metric_source(path)
-      @metric_source ||= case @options[:librato][:metric_source]
+    def extract_metric_source(metric_path)
+      metric_source = @options[:librato][:metric_source]
+      fallback_source = "recognizer"
+      case metric_source
       when String
-        if @options[:librato][:metric_source].match("^/.*/$")
-          @source_pattern = Regexp.new(@options[:librato][:metric_source].delete("/"))
-          Proc.new { |path| (matched = path.grep(@source_pattern).first) ? matched : "recognizer" }
+        if metric_source =~ /^\/.*\/$/
+          metric_path.grep(Regexp.new(metric_source.slice(1..-2))).first || fallback_source
         else
-          Proc.new { @options[:librato][:metric_source] }
+          metric_source
         end
       when Integer
-        Proc.new { |path| path.slice(@options[:librato][:metric_source]) || "recognizer" }
+        metric_path.slice(metric_source) || fallback_source
       else
-        Proc.new { "recognizer" }
+        fallback_source
       end
-      @metric_source.call(path)
     end
 
-    def create_metric(carbon_formatted)
-      if valid_carbon_metric?(carbon_formatted)
-        parts     = carbon_formatted.split("\s")
+    def pretty_number(number)
+      float = Float(number)
+      float == float.to_i ? float.to_i : float
+    end
 
-        path      = parts.shift.split(".")
-        value     = Float(parts.shift).pretty
-        timestamp = Float(parts.shift).pretty
-        source    = metric_source(path)
+    def create_librato_metric(plain_text)
+      if valid_plain_text?(plain_text)
+        segments  = plain_text.split("\s")
+
+        path      = segments.shift.split(".")
+        value     = pretty_number(segments.shift)
+        timestamp = pretty_number(segments.shift)
+        source    = extract_metric_source(path)
 
         path.delete(source)
 
         name = path.join(".")
 
-        metric = {
-          name => {
-            :value => value,
-            :measure_time => timestamp,
-            :source => source
+        if name.size <= 63
+          {
+            name => {
+              :value => value,
+              :measure_time => timestamp,
+              :source => source
+            }
           }
-        }
-
-        unless name.size <= 63
-          invalid_metric(metric, "Metric name must be 63 or fewer characters")
         else
-          metric
+          invalid_metric(plain_text, "Metric name must be 63 or fewer characters after source extraction")
         end
       else
         false
@@ -114,7 +118,7 @@ module Recognizer
     def setup_consumer
       Thread.new do
         loop do
-          if metric = create_metric(@input_queue.shift)
+          if metric = create_libratro_metric(@input_queue.shift)
             @logger.info("Adding metric to Librato queue :: #{metric.inspect}")
             @librato_mutex.synchronize do
               @librato_queue.add(metric)
