@@ -1,4 +1,3 @@
-require "thread"
 require "hot_bunnies"
 
 module Recognizer
@@ -14,8 +13,6 @@ module Recognizer
         @options[:amqp][:exchange][:durable]     ||= false
         @options[:amqp][:exchange][:routing_key] ||= "#"
         @options[:amqp][:exchange][:type]        ||= (@options[:amqp][:exchange][:type] || "topic").to_sym
-
-        Thread.abort_on_exception = true
       end
 
       def run

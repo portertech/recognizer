@@ -3,7 +3,7 @@ require 'minitest/autorun'
 class TestAMQPInput < MiniTest::Unit::TestCase
   include TestHelper
 
-  def test_valid_carbon_metric
+  def test_valid_plain_text
     setup_librato
     assert(@librato.valid_plain_text?("foo 42 #{Time.now.to_i}"))
     refute(@librato.valid_plain_text?("cash$ 42 #{Time.now.to_i}"))
@@ -11,7 +11,7 @@ class TestAMQPInput < MiniTest::Unit::TestCase
     refute(@librato.valid_plain_text?("foo 42 bar"))
   end
 
-  def test_metric_source
+  def test_extract_metric_source
     metric_path = %w[production i-424242 cpu user]
     setup_librato
     assert_equal(@librato.extract_metric_source(metric_path), "recognizer")
@@ -25,7 +25,7 @@ class TestAMQPInput < MiniTest::Unit::TestCase
     assert_equal(@librato.extract_metric_source(metric_path), "recognizer")
   end
 
-  def test_create_metric
+  def test_create_librato_metric
     setup_librato(:metric_source => "/i-.*/")
     timestamp = Time.now.to_i
     expected = {
