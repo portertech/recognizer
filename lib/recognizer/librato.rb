@@ -104,8 +104,9 @@ module Recognizer
             @logger.info("Attempting to flush metrics to Librato")
             @librato_mutex.synchronize do
               begin
+                metric_count = @librato_queue.size
                 @librato_queue.submit
-                @logger.info("Successfully flushed metrics to Librato")
+                @logger.info("Successfully flushed #{metric_count} metrics to Librato")
               rescue => error
                 @logger.error("Encountered an error when flushing metrics to Librato :: #{error}")
               end
