@@ -40,12 +40,12 @@ module Recognizer
 
         queue = amq.queue("recognizer")
         queue.bind(exchange, {
-          :key => @options[:amqp][:exchange][:routing_key]
+          :routing_key => @options[:amqp][:exchange][:routing_key]
         })
 
         @logger.info("AMQP -- Awaiting metrics with impatience ...")
 
-        queue.subscribe(:ack => true, :blocking => false) do |header, message|
+        subscription = queue.subscribe(:ack => true, :blocking => false) do |header, message|
           msg_routing_key = header.routing_key
           lines           = message.split("\n")
           lines.each do |line|
@@ -60,6 +60,12 @@ module Recognizer
             end
           end
           header.ack
+        end
+
+        at_exit do
+          subscription.cancel
+          amq.close
+          rabbitmq.close
         end
       end
     end

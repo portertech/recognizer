@@ -25,5 +25,7 @@ class TestAMQPInput < MiniTest::Unit::TestCase
     assert_equal(metrics, results)
     exchange.publish("42 #{Time.now.to_i}", :routing_key => "foo")
     assert_equal("foo 42 #{Time.now.to_i}", @input_queue.shift)
+    amq.close
+    rabbitmq.close
   end
 end
