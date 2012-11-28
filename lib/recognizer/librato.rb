@@ -1,5 +1,4 @@
 require "recognizer/version"
-require "recognizer/patches/openssl"
 require "thread"
 require "librato/metrics"
 
@@ -119,7 +118,7 @@ module Recognizer
     def setup_consumer
       Thread.new do
         loop do
-          if metric = create_libratro_metric(@input_queue.shift)
+          if metric = create_librato_metric(@input_queue.shift)
             @logger.info("Adding metric to Librato queue :: #{metric.inspect}")
             @librato_mutex.synchronize do
               @librato_queue.add(metric)

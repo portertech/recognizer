@@ -1,3 +1,4 @@
+require "logger"
 require "recognizer/cli"
 require "recognizer/config"
 require "recognizer/librato"
