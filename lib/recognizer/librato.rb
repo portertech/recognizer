@@ -119,7 +119,7 @@ module Recognizer
       Thread.new do
         loop do
           if metric = create_librato_metric(@input_queue.shift)
-            @logger.info("Adding metric to Librato queue :: #{metric.inspect}")
+            @logger.debug("Adding metric to Librato queue :: #{metric.inspect}")
             @librato_mutex.synchronize do
               @librato_queue.add(metric)
             end

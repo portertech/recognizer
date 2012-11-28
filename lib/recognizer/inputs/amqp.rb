@@ -16,11 +16,7 @@ module Recognizer
       end
 
       def run
-        if @options.has_key?(:amqp)
-          setup_consumer
-        else
-          @logger.warn("AMQP -- Not configured")
-        end
+        setup_consumer
       end
 
       private
@@ -29,8 +25,8 @@ module Recognizer
         connection_options = @options[:amqp].reject { |key, value| key == :exchange }
 
         rabbitmq = HotBunnies.connect(connection_options)
+        amq      = rabbitmq.create_channel
 
-        amq = rabbitmq.create_channel
         amq.prefetch = 10
 
         exchange = amq.exchange(@options[:amqp][:exchange][:name], {
