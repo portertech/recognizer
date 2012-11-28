@@ -11,19 +11,21 @@ class TestAMQPInput < MiniTest::Unit::TestCase
       "malformed",
       "bar 73 #{Time.now.to_i}"
     ]
-    amqp = Bunny.new
-    amqp.start
-    exchange = amqp.exchange("graphite", :type => "topic", :durable => false)
+    rabbitmq = HotBunnies.connect
+    amq = rabbitmq.create_channel
+    exchange = amq.exchange("graphite", :type => "topic", :durable => false)
     metrics.each do |metric|
-      exchange.publish(metric, :key => "recognizer")
+      exchange.publish(metric, :routing_key => "recognizer")
     end
-    result = Array.new
+    results = Array.new
     2.times do
-      result << @input_queue.shift
+      results << @input_queue.shift
     end
     metrics.delete("malformed")
-    assert_equal(metrics, result)
-    exchange.publish("42 #{Time.now.to_i}", :key => "foo")
+    assert_equal(metrics, results)
+    exchange.publish("42 #{Time.now.to_i}", :routing_key => "foo")
     assert_equal("foo 42 #{Time.now.to_i}", @input_queue.shift)
+    amq.close
+    rabbitmq.close
   end
 end

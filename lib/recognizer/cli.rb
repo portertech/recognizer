@@ -9,6 +9,13 @@ module Recognizer
       :long  => "--config CONFIG",
       :description => "The config file path"
 
+    option :verbose,
+      :short => "-v",
+      :long  => "--verbose",
+      :description => "Enable verbose logging",
+      :boolean => true,
+      :default => false
+
     option :help,
       :short => "-h",
       :long => "--help",
