@@ -13,8 +13,9 @@ class TestAMQPInput < MiniTest::Unit::TestCase
     end
     assert_equal(sample_metrics.first, @input_queue.shift)
     assert_equal(sample_metrics.last, @input_queue.shift)
-    exchange.publish("42 #{Time.now.to_i}", :routing_key => "foo")
-    assert_equal("foo 42 #{Time.now.to_i}", @input_queue.shift)
+    timestamp = Time.now.to_i
+    exchange.publish("42 #{timestamp}", :routing_key => "foo")
+    assert_equal("foo 42 #{timestamp}", @input_queue.shift)
     amq.close
     rabbitmq.close
   end

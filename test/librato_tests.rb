@@ -24,7 +24,7 @@ class TestLibrato < MiniTest::Unit::TestCase
   def test_pretty_number
     setup_librato
     assert(@librato.pretty_number(1.0).is_a?(Integer))
-    assert(@librato.pretty_number(1.5).is_a?(Float))
+    assert(@librato.pretty_number(1.50).is_a?(Float))
   end
 
   def test_create_librato_metric
