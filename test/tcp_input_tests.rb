@@ -5,11 +5,12 @@ class TestTCPInput < MiniTest::Unit::TestCase
 
   def test_tcp_server
     setup_tcp_input
-    sleep 2
-    metric = "foo 42 #{Time.now.to_i}"
     socket = TCPSocket.new("127.0.0.1", 2003)
-    socket.puts(metric)
+    sample_metrics.each do |metric|
+      socket.puts(metric)
+    end
     socket.close
-    assert_equal(metric, @input_queue.shift)
+    assert_equal(sample_metrics.first, @input_queue.shift)
+    assert_equal(sample_metrics.last, @input_queue.shift)
   end
 end

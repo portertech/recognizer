@@ -33,6 +33,7 @@ module TestHelper
       :input_queue => @input_queue
     )
     tcp.run
+    sleep 2
   end
 
   def setup_amqp_input(options={})
@@ -46,5 +47,14 @@ module TestHelper
       :input_queue => @input_queue
     )
     amqp.run
+    sleep 2
+  end
+
+  def sample_metrics
+    [
+      "foo 42 #{Time.now.to_i}",
+      "malformed",
+      "bar 73 #{Time.now.to_i}"
+    ]
   end
 end
