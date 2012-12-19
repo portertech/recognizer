@@ -42,8 +42,8 @@ module Recognizer
       end
     end
 
-    def extract_metric_source(metric_path)
-      metric_source = @options[:librato][:metric_source]
+    def extract_metric_source(metric_path, metric_source=nil)
+      metric_source ||= @options[:librato][:metric_source]
       fallback_source = "recognizer"
       case metric_source
       when String

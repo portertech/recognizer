@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 
-class TestAMQPInput < MiniTest::Unit::TestCase
+class TestLibrato < MiniTest::Unit::TestCase
   include TestHelper
 
   def test_valid_plain_text
@@ -12,17 +12,19 @@ class TestAMQPInput < MiniTest::Unit::TestCase
   end
 
   def test_extract_metric_source
-    metric_path = %w[production i-424242 cpu user]
     setup_librato
+    metric_path = %w[production i-424242 cpu user]
     assert_equal(@librato.extract_metric_source(metric_path), "recognizer")
-    setup_librato(:metric_source => "/i-.*/")
-    assert_equal(@librato.extract_metric_source(metric_path), "i-424242")
-    setup_librato(:metric_source => "/foobar/")
-    assert_equal(@librato.extract_metric_source(metric_path), "recognizer")
-    setup_librato(:metric_source => 1)
-    assert_equal(@librato.extract_metric_source(metric_path), "i-424242")
-    setup_librato(:metric_source => 5)
-    assert_equal(@librato.extract_metric_source(metric_path), "recognizer")
+    assert_equal(@librato.extract_metric_source(metric_path, "/i-.*/"), "i-424242")
+    assert_equal(@librato.extract_metric_source(metric_path, "/foobar/"), "recognizer")
+    assert_equal(@librato.extract_metric_source(metric_path, 1), "i-424242")
+    assert_equal(@librato.extract_metric_source(metric_path, 5), "recognizer")
+  end
+
+  def test_pretty_number
+    setup_librato
+    assert(@librato.pretty_number(1.0).is_a?(Integer))
+    assert(@librato.pretty_number(1.5).is_a?(Float))
   end
 
   def test_create_librato_metric
@@ -35,7 +37,7 @@ class TestAMQPInput < MiniTest::Unit::TestCase
         :source       => "i-424242"
       }
     }
-    result = @librato.create_librato_metric("production.i-424242.cpu.user 0.5 #{timestamp}")
+    result = @librato.create_librato_metric("production.i-424242.cpu.user 0.50 #{timestamp}")
     assert_equal(expected, result)
     refute(@librato.create_librato_metric("malformed"))
   end
