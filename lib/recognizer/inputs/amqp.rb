@@ -2,11 +2,11 @@ require "hot_bunnies"
 
 module Recognizer
   module Input
-    class AMQP
+    class AMQP < Base
       def initialize(options={})
-        @logger      = options[:logger]
-        @options     = options[:options]
-        @input_queue = options[:input_queue]
+        super
+
+        @enabled = @options.has_key?(:amqp)
 
         @options[:amqp][:exchange]               ||= Hash.new
         @options[:amqp][:exchange][:name]        ||= "graphite"
