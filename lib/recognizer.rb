@@ -3,9 +3,8 @@ require "recognizer/cli"
 require "recognizer/config"
 require "recognizer/librato"
 require "recognizer/input"
-
-inputs = File.join(File.dirname(__FILE__), "recognizer", "inputs", "*")
-Dir.glob(inputs, &method(:require))
+require "recognizer/inputs/tcp"
+require "recognizer/inputs/amqp"
 
 module Recognizer
   def self.run
