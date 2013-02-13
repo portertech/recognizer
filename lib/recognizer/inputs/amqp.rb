@@ -8,6 +8,7 @@ module Recognizer
 
         @enabled = @options.has_key?(:amqp)
 
+        @options[:amqp]                          ||= Hash.new
         @options[:amqp][:exchange]               ||= Hash.new
         @options[:amqp][:exchange][:name]        ||= "graphite"
         @options[:amqp][:exchange][:durable]     ||= false
