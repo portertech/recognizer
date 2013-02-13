@@ -6,5 +6,3 @@
 .vagrant
 .DS_Store
 config.json
-test/chef/cookbooks/*
-test/chef/tmp/*
