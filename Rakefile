@@ -27,4 +27,3 @@ task :release => :build do
   system "git push --tags"
   system "gem push recognizer-#{Recognizer::VERSION}-java.gem"
 end
-

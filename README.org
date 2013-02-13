@@ -7,10 +7,8 @@
 
   [[https://github.com/portertech/recognizer/raw/master/recognizer.gif]]
 * Install
-  Executable Java JAR (recommended)
-  : wget https://github.com/downloads/portertech/recognizer/recognizer.jar
-  RubyGems
-  : gem install recognizer
+  Executable Java JAR
+  : wget http://portertech.s3.amazonaws.com/recognizer/recognizer.jar
 * Configure
   Example: =config.json=
   : {
@@ -28,9 +26,7 @@
 * Usage
   Executable Java JAR
   : java -jar recognizer.jar -h
-  RubyGems
-  : recognizer -h
-
+  : 
   : Usage: recognizer (options)
   :  -c, --config CONFIG              The config file path
   :  -h, --help                       Show this message

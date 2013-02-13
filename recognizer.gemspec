@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   s.add_dependency("jruby-openssl", "0.7.7")
   s.add_dependency("mixlib-cli", "1.2.2")
   s.add_dependency("hot_bunnies", "1.4.0")
-  s.add_dependency("librato-metrics", "0.7.5")
+  s.add_dependency("librato-metrics", "1.0.3")
 end

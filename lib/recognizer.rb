@@ -2,6 +2,7 @@ require "logger"
 require "recognizer/cli"
 require "recognizer/config"
 require "recognizer/librato"
+require "recognizer/input"
 require "recognizer/inputs/tcp"
 require "recognizer/inputs/amqp"
 
@@ -24,20 +25,15 @@ module Recognizer
     )
     librato.run
 
-    tcp = Recognizer::Input::TCP.new(
-      :logger      => logger,
-      :options     => options,
-      :input_queue => input_queue
-    )
-    tcp.run
-
-    if options.has_key?(:amqp)
-      amqp = Recognizer::Input::AMQP.new(
+    Recognizer::Input::Base.descendants.each do |klass|
+      input = klass.new(
         :logger      => logger,
         :options     => options,
         :input_queue => input_queue
       )
-      amqp.run
+      if input.enabled?
+        input.run
+      end
     end
 
     loop do

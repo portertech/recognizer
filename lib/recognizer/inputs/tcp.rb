@@ -3,11 +3,9 @@ require "socket"
 
 module Recognizer
   module Input
-    class TCP
+    class TCP < Base
       def initialize(options={})
-        @logger      = options[:logger]
-        @options     = options[:options]
-        @input_queue = options[:input_queue]
+        super
 
         @options[:tcp] ||= Hash.new
         @tcp_connections = Queue.new
