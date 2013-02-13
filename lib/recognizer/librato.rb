@@ -73,7 +73,7 @@ module Recognizer
         timestamp = pretty_number(segments.shift)
         source    = extract_metric_source(path)
 
-        path.delete(source)
+        path.slice!(path.index(source))
 
         name = path.join(".")
 
