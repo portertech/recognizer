@@ -22,7 +22,8 @@ module Recognizer
 
       def setup_server
         port       = @options[:tcp][:port] || 2003
-        tcp_server = TCPServer.new("0.0.0.0", port)
+        address    = @options[:tcp][:address] || '0.0.0.0'
+        tcp_server = TCPServer.new(address, port)
         Thread.new do
           @logger.info("TCP -- Awaiting metrics with impatience ...")
           loop do

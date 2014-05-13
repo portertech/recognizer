@@ -56,6 +56,11 @@
   : {
   :   "tcp": {
   :     "threads": 30
+***** By default, The recognizer TCP server binds to =0.0.0.0=
+  Make the TCP server listen only on local interface.
+  : {
+  :   "tcp": {
+  :   "address": "127.0.0.1"
 ***** By default, Recognizer binds the AMQP queue =recognizer= to the topic exchange =graphite= with the routing key =#=
   Use a custom AMQP exchange
   : {
